@@ -52,10 +52,9 @@ jobs:
 
     steps:
       - name: Install CSpell
-        run: npm install -g cspell@latest
-
-      - name: Check CSpell version
-        run: cspell --version
+        run: |
+          npm install -g cspell@latest
+          cspell --version
 
       - name: Create custom cspell config
         run: |
