@@ -5,15 +5,15 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      workingOrgs:
-        description: 'Comma-separated orgs to check'
-        default: 'axonivy-market'
       workingRepos:
-        description: 'Comma-separated list of repo names. (e.g., a-trust-connector) (optional)'
+        description: 'Comma-separated list of repository names. (e.g., a-trust-connector, process-analyser) (optional)'
       workingBranch:
         description: 'The branch need to be checked. (e.g., master, release/12.0, ...)'
         default: 'master'
         required: true
+
+env:
+  WORKING_ORG: axonivy-market
 
 jobs:
   prepare:
@@ -25,9 +25,10 @@ jobs:
         id: set-matrix
         env:
           GH_TOKEN: ${{ github.token }}
+          WORKING_ORG: ${{ env.WORKING_ORG }}
         run: |
-          ORG="${{ github.event.inputs.workingOrgs }}"
-          INPUT_REPOS="${{ github.event.inputs.workingRepos }}"
+          ORG="${WORKING_ORGS}"
+          INPUT_REPOS="${{ github.event.inputs.workingRepo }}"
           if [ -n "$INPUT_REPOS" ]; then
             REPOS=$(jq -R 'split(",")' <<< "$INPUT_REPOS")
           else
@@ -191,14 +192,14 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.inputs.workingOrgs }}/${{ matrix.repo }}
+          repository: ${{ env.WORKING_ORGS }}/${{ matrix.repo }}
           path: target-repo
           ref: ${{ github.event.inputs.workingBranch }}
 
       - name: Run CSpell - Spelling Quality Check
         run: |
           REPO="${{ matrix.repo }}"
-          echo "🔤🔍 ${{ github.event.inputs.workingOrgs }}/$REPO ..."
+          echo "🔤🔍 ${{ env.WORKING_ORGS }}/$REPO ..."
           cd target-repo
           cspell lint --config ../cspell.json > $REPO.txt
 
