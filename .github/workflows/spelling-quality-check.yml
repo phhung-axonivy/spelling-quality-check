@@ -175,7 +175,8 @@ jobs:
               "adobesign",
               "ESIGN",
               "HANA",
-              "atrust"
+              "atrust",
+              "HandySignatur"
             ]
           }
           EOF
