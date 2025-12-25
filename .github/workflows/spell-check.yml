@@ -54,6 +54,7 @@ jobs:
       - name: Install CSpell
         run: |
           npm install -g cspell@latest
+          echo "Cspell Version:"
           cspell --version
 
       - name: Create custom cspell config
