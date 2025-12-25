@@ -1,4 +1,4 @@
-name: Spelling Quality Check
+name: Spell Check
 
 permissions:
   contents: read
@@ -42,7 +42,7 @@ jobs:
           echo "$MATRIX_JSON" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-  spelling-quality-check:
+  spell-check:
     needs: prepare
     runs-on: ubuntu-latest
     strategy:
@@ -196,7 +196,7 @@ jobs:
           path: target-repo
           ref: ${{ github.event.inputs.workingBranch }}
 
-      - name: Run CSpell - Spelling Quality Check
+      - name: Run CSpell - Spell Check
         run: |
           REPO="${{ matrix.repo }}"
           echo "🔤🔍 ${{ env.WORKING_ORG }}/$REPO ..."
