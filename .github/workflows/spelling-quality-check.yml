@@ -27,8 +27,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           WORKING_ORG: ${{ env.WORKING_ORG }}
         run: |
-          ORG="${WORKING_ORGS}"
-          INPUT_REPOS="${{ github.event.inputs.workingRepo }}"
+          ORG="${WORKING_ORG}"
+          INPUT_REPOS="${{ github.event.inputs.workingRepos }}"
           if [ -n "$INPUT_REPOS" ]; then
             REPOS=$(jq -R 'split(",")' <<< "$INPUT_REPOS")
           else
