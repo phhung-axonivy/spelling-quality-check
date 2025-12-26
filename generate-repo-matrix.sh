@@ -6,7 +6,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -n "$1" ]; then
   REPOS=$(jq -R 'split(",")' <<< "$1")
 else
-  REPOS=$(collectRepos)
+  REPOS=$(collectRepos | jq -Rs 'split("\n")[:-1]')
   echo "📦 Found repos: $REPOS"
 fi
 
