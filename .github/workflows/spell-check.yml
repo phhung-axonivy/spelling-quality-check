@@ -33,7 +33,7 @@ jobs:
             REPOS=$(jq -R 'split(",")' <<< "$INPUT_REPOS")
           else
           # Get full repo list from org
-            REPOS=$(gh repo list "$ORG" --limit 1000 --json name -q '[.[].name]')
+            ./repo-collector.sh > REPOS
             echo "📦 Found repos: $REPOS"
           fi
           # Build matrix JSON object
