@@ -18,32 +18,14 @@ env:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    outputs:
-      repo-matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
       - name: Generate matrix dynamically
-        id: set-matrix
-        env:
-          GH_TOKEN: ${{ secrets.GH }}
-          WORKING_ORG: ${{ env.WORKING_ORG }}
+        id: generate_matrix
         run: |
-          ORG="${WORKING_ORG}"
-          INPUT_REPOS="${{ github.event.inputs.workingRepos }}"
-          if [ -n "$INPUT_REPOS" ]; then
-            REPOS=$(jq -R 'split(",")' <<< "$INPUT_REPOS")
-          else
-          # Get full repo list from org
-            chmod +x ./repo-collector.sh
-            REPO_LIST=$(./repo-collector.sh)
-            REPOS=$(echo "$REPO_LIST" | jq -Rs 'split("\n")[:-1]')
-            echo "📦 Found repos: $REPOS"
-          fi
-          # Build matrix JSON object
-          MATRIX_JSON=$(jq -n --argjson repos "$REPOS" '{ include: $repos }')
-          echo "matrix<<EOF" >> $GITHUB_OUTPUT
-          echo "$MATRIX_JSON" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          ./generate-repo-matrix.sh ${{ github.event.inputs.workingRepos }}
+    outputs:
+      matrix: ${{ steps.generate_matrix.outputs.matrix }}
 
   spell-check:
     needs: prepare

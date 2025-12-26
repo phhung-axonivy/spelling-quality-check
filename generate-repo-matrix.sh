@@ -1,17 +1,17 @@
 #!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Assume you get REPOS as a newline-separated list (for example, as input or from a file)
-REPO_LIST="${1:-repos.txt}"
+. "${DIR}/repo-collector.sh"
 
-# Read repo list (from file or variable)
-if [ -f "$REPO_LIST" ]; then
-  REPOS=$(cat "$REPO_LIST")
+if [ -n "$1" ]; then
+  REPOS=$(jq -R 'split(",")' <<< "$1")
 else
-  REPOS="$REPO_LIST"
+  REPOS=$(collectRepos)
+  echo "📦 Found repos: $REPOS"
 fi
 
-# Convert NEWLINE separated to JSON array
-MATRIX=$(echo "$REPOS" | jq -Rs 'split("\n")[:-1]')
-
-# Output result to workflow output variable
-echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+# Build matrix JSON object
+MATRIX_JSON=$(jq -n --argjson repos "$REPOS" '{ include: $repos }')
+echo "matrix<<EOF" >> $GITHUB_OUTPUT
+echo "$MATRIX_JSON" >> $GITHUB_OUTPUT
+echo "EOF" >> $GITHUB_OUTPUT
