@@ -39,8 +39,6 @@ jobs:
     steps:
       - name: Check if branch exists in target repository
         id: check_branch
-        env:
-          GH_TOKEN: ${{ secrets.GH }}
         run: |
           ORG="${{ env.WORKING_ORG }}"
           REPO="${{ matrix.repo }}"
