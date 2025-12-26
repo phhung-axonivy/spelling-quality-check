@@ -66,16 +66,17 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ env.WORKING_ORG }}/${{ matrix.repo }}
-          path: target-repo
-          ref: ${{ github.event.inputs.workingBranch }}
-
       - name: Fail gracefully if branch does not exist
         if: steps.check_branch.outputs.exists == 'false'
         run: |
           echo "The branch '${{ github.event.inputs.workingBranch }}' does not exist in '${{ env.WORKING_ORG }}/${{ matrix.repo }}'. Skipping."
+
+      - uses: actions/checkout@v4
+        if: steps.check_branch.outputs.exists == 'true'
+        with:
+          repository: ${{ env.WORKING_ORG }}/${{ matrix.repo }}
+          path: target-repo
+          ref: ${{ github.event.inputs.workingBranch }}
 
       - name: Install CSpell
         if: steps.check_branch.outputs.exists == 'true'
