@@ -30,9 +30,11 @@ jobs:
           gh auth setup-git
         env:
           GH_TOKEN2: ${{ secrets.GH }}
+
       - name: Generate matrix dynamically
         id: set-matrix
         env:
+          GH_TOKEN: ${{ secrets.GH }}
           WORKING_ORG: ${{ env.WORKING_ORG }}
         run: |
           ORG="${WORKING_ORG}"
@@ -41,9 +43,10 @@ jobs:
             REPOS=$(jq -R 'split(",")' <<< "$INPUT_REPOS")
           else
           # Get full repo list from org
-            echo "workDir=$(pwd)" >> $GITHUB_ENV
-            REPO_LIST=$(./repo-collector.sh)
-            REPOS=$(jq -R 'split(",")' <<< "$REPO_LIST")
+            chmod +x ./repo-collector.sh
+            source ./repo-collector.sh
+            collectRepos >> REPO_LIST
+            REPOS=$(jq -Rs 'split("\n")[:-1]' <<< "$REPO_LIST")
             echo "📦 Found repos: $REPOS"
           fi
           # Build matrix JSON object
