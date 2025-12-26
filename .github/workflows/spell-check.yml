@@ -136,9 +136,7 @@ jobs:
           REPO="${{ matrix.repo }}"
           echo "🔤🔍 ${{ env.WORKING_ORG }}/$REPO - branch:${{ github.event.inputs.workingBranch }} ..."
           cd target-repo
-          CSPELL_EXIT=0
-          cspell lint --config ../cspell.json 2>&1 | tee "$REPO.txt"
-          CSPELL_EXIT=${PIPESTATUS[0]}
+          cspell lint --config ../cspell.json > "$REPO.txt"
 
       - name: Upload Spell Check Results
         if: failure() && steps.check_branch.outputs.exists == 'true'
