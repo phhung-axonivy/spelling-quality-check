@@ -20,17 +20,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install CSpell
+        run: |
+          npm install -g cspell@8.14.1
+          echo "Cspell Version:"
+          cspell --version
       - name: Generate matrix dynamically
         id: generate_matrix
         run: |
           chmod +x ./generate-repo-matrix.sh
           ./generate-repo-matrix.sh ${{ github.event.inputs.workingRepos }}
-      - name: Install CSpell
-        if: steps.check_branch.outputs.exists == 'true'
-        run: |
-          npm install -g cspell@8.14.1
-          echo "Cspell Version:"
-          cspell --version
+
     outputs:
       matrix: ${{ steps.generate_matrix.outputs.matrix }}
 
